@@ -1,0 +1,14 @@
+-- Insert sample baseball players from the 1970s and 1980s
+INSERT INTO players (name, team, position, years_active, decade, image_url, description, stats) VALUES
+('Reggie Jackson', 'New York Yankees', 'Right Field', '1967-1987', 'Both', '/placeholder.svg?height=400&width=300', 'Known as "Mr. October" for his clutch postseason performances', '{"home_runs": 563, "rbi": 1702, "batting_average": 0.262}'),
+('Pete Rose', 'Cincinnati Reds', 'First Base', '1963-1986', 'Both', '/placeholder.svg?height=400&width=300', 'All-time hits leader and key member of the Big Red Machine', '{"hits": 4256, "games": 3562, "batting_average": 0.303}'),
+('Nolan Ryan', 'California Angels', 'Pitcher', '1966-1993', 'Both', '/placeholder.svg?height=400&width=300', 'Hall of Fame pitcher known for his blazing fastball and no-hitters', '{"strikeouts": 5714, "no_hitters": 7, "era": 3.19}'),
+('George Brett', 'Kansas City Royals', 'Third Base', '1973-1993', 'Both', '/placeholder.svg?height=400&width=300', 'Royals legend who nearly hit .400 in 1980', '{"batting_average": 0.305, "home_runs": 317, "hits": 3154}'),
+('Tony Gwynn', 'San Diego Padres', 'Right Field', '1982-2001', '1980s', '/placeholder.svg?height=400&width=300', 'Master contact hitter with 8 batting titles', '{"batting_average": 0.338, "hits": 3141, "stolen_bases": 319}'),
+('Mike Schmidt', 'Philadelphia Phillies', 'Third Base', '1972-1989', 'Both', '/placeholder.svg?height=400&width=300', 'Hall of Fame third baseman and three-time MVP', '{"home_runs": 548, "rbi": 1595, "gold_gloves": 10}'),
+('Carlton Fisk', 'Boston Red Sox', 'Catcher', '1969-1993', 'Both', '/placeholder.svg?height=400&width=300', 'Famous for his dramatic 1975 World Series home run', '{"home_runs": 376, "rbi": 1330, "all_star_games": 11}'),
+('Rickey Henderson', 'Oakland Athletics', 'Left Field', '1979-2003', '1980s', '/placeholder.svg?height=400&width=300', 'All-time stolen base leader and leadoff hitter extraordinaire', '{"stolen_bases": 1406, "runs": 2295, "batting_average": 0.279}'),
+('Wade Boggs', 'Boston Red Sox', 'Third Base', '1982-1999', '1980s', '/placeholder.svg?height=400&width=300', 'Five-time batting champion known for his hitting consistency', '{"batting_average": 0.328, "hits": 3010, "walks": 1412}'),
+('Don Mattingly', 'New York Yankees', 'First Base', '1982-1995', '1980s', '/placeholder.svg?height=400&width=300', 'Yankees captain and 1985 AL MVP', '{"batting_average": 0.307, "home_runs": 222, "rbi": 1099}'),
+('Johnny Bench', 'Cincinnati Reds', 'Catcher', '1967-1983', 'Both', '/placeholder.svg?height=400&width=300', 'Hall of Fame catcher and cornerstone of the Big Red Machine', '{"home_runs": 389, "rbi": 1376, "gold_gloves": 10}'),
+('Rod Carew', 'Minnesota Twins', 'Second Base', '1967-1985', 'Both', '/placeholder.svg?height=400&width=300', 'Seven-time batting champion with incredible contact skills', '{"batting_average": 0.328, "hits": 3053, "stolen_bases": 353}');
