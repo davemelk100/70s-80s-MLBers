@@ -1,30 +1,96 @@
-# Baseball player image database
+# Baseball Legends Database
 
-*Automatically synced with your [v0.dev](https://v0.dev) deployments*
+A React application showcasing baseball players from the 1970s and 1980s with their statistics and images.
 
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/davemelk100s-projects/v0-baseball-player-image-database)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.dev-black?style=for-the-badge)](https://v0.dev/chat/projects/kRPTKk0CRyI)
+## Tech Stack
 
-## Overview
+- **Vite** - Fast build tool and development server
+- **React 19** - UI library
+- **TypeScript** - Type safety
+- **Tailwind CSS** - Styling
+- **Radix UI** - Accessible UI components
+- **Lucide React** - Icons
 
-This repository will stay in sync with your deployed chats on [v0.dev](https://v0.dev).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.dev](https://v0.dev).
+## Getting Started
 
-## Deployment
+### Prerequisites
 
-Your project is live at:
+- Node.js (version 18 or higher)
+- npm or yarn
 
-**[https://vercel.com/davemelk100s-projects/v0-baseball-player-image-database](https://vercel.com/davemelk100s-projects/v0-baseball-player-image-database)**
+### Installation
 
-## Build your app
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd 70s-80s-MLBers
+```
 
-Continue building your app on:
+2. Install dependencies:
+```bash
+npm install
+```
 
-**[https://v0.dev/chat/projects/kRPTKk0CRyI](https://v0.dev/chat/projects/kRPTKk0CRyI)**
+### Development
 
-## How It Works
+Start the development server:
+```bash
+npm run dev
+```
 
-1. Create and modify your project using [v0.dev](https://v0.dev)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
+The application will be available at `http://localhost:3000`
+
+### Building for Production
+
+Build the application:
+```bash
+npm run build
+```
+
+Preview the production build:
+```bash
+npm run preview
+```
+
+The preview will be available at `http://localhost:4173`
+
+### Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `npm run lint` - Run ESLint
+
+## Project Structure
+
+```
+src/
+├── components/          # React components
+│   ├── ui/             # Reusable UI components
+│   ├── player-image.tsx
+│   └── theme-provider.tsx
+├── hooks/              # Custom React hooks
+├── lib/                # Utility functions
+├── App.tsx             # Main application component
+├── main.tsx            # Application entry point
+└── index.css           # Global styles
+```
+
+## Features
+
+- Browse baseball players from the 1970s and 1980s
+- Search players by name or team
+- Filter by decade (1970s, 1980s, or both)
+- Filter by position
+- View player statistics and career information
+- Responsive design for mobile and desktop
+
+## Migration from Next.js
+
+This project was migrated from Next.js to Vite for improved build performance and development experience. Key changes:
+
+- Replaced Next.js with Vite build system
+- Converted Next.js Image component to standard img tags
+- Updated import paths to use src directory structure
+- Removed Next.js specific directives like "use client"
+- Updated TypeScript configuration for Vite

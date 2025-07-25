@@ -1,23 +1,39 @@
-"use client"
-
-import { useState, useEffect } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge"
-import { Search, BeerIcon as Baseball, Calendar, MapPin, Trophy } from "lucide-react"
-import { PlayerImage } from "@/components/player-image"
+import { useState, useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import {
+  Search,
+  BeerIcon as Baseball,
+  Calendar,
+  MapPin,
+  Trophy,
+} from "lucide-react";
+import { PlayerImage } from "@/components/player-image";
 
 interface Player {
-  id: number
-  name: string
-  team: string
-  position: string
-  years_active: string
-  decade: string
-  image_url: string
-  description: string
-  stats: Record<string, any>
+  id: number;
+  name: string;
+  team: string;
+  position: string;
+  years_active: string;
+  decade: string;
+  image_url: string;
+  description: string;
+  stats: Record<string, any>;
 }
 
 // Mock data for demonstration - updated with local image paths
@@ -30,7 +46,8 @@ const mockPlayers: Player[] = [
     years_active: "1967-1987",
     decade: "Both",
     image_url: "/images/players/reggie-jackson.png",
-    description: 'Known as "Mr. October" for his clutch postseason performances',
+    description:
+      'Known as "Mr. October" for his clutch postseason performances',
     stats: { home_runs: 563, rbi: 1702, batting_average: 0.262 },
   },
   {
@@ -52,7 +69,8 @@ const mockPlayers: Player[] = [
     years_active: "1966-1993",
     decade: "Both",
     image_url: "/images/players/nolan-ryan.png",
-    description: "Hall of Fame pitcher known for his blazing fastball and no-hitters",
+    description:
+      "Hall of Fame pitcher known for his blazing fastball and no-hitters",
     stats: { strikeouts: 5714, no_hitters: 7, era: 3.19 },
   },
   {
@@ -107,7 +125,8 @@ const mockPlayers: Player[] = [
     years_active: "1979-2003",
     decade: "1980s",
     image_url: "/images/players/rickey-henderson.png",
-    description: "All-time stolen base leader and leadoff hitter extraordinaire",
+    description:
+      "All-time stolen base leader and leadoff hitter extraordinaire",
     stats: { stolen_bases: 1406, runs: 2295, batting_average: 0.279 },
   },
   {
@@ -154,49 +173,53 @@ const mockPlayers: Player[] = [
     description: "Seven-time batting champion with incredible contact skills",
     stats: { batting_average: 0.328, hits: 3053, stolen_bases: 353 },
   },
-]
+];
 
-export default function BaseballDatabase() {
-  const [players, setPlayers] = useState<Player[]>(mockPlayers)
-  const [filteredPlayers, setFilteredPlayers] = useState<Player[]>(mockPlayers)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedDecade, setSelectedDecade] = useState("all")
-  const [selectedPosition, setSelectedPosition] = useState("all")
+export default function App() {
+  const [players] = useState<Player[]>(mockPlayers);
+  const [filteredPlayers, setFilteredPlayers] = useState<Player[]>(mockPlayers);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedDecade, setSelectedDecade] = useState("all");
+  const [selectedPosition, setSelectedPosition] = useState("all");
 
   useEffect(() => {
-    let filtered = players
+    let filtered = players;
 
     if (searchTerm) {
       filtered = filtered.filter(
         (player) =>
           player.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          player.team.toLowerCase().includes(searchTerm.toLowerCase()),
-      )
+          player.team.toLowerCase().includes(searchTerm.toLowerCase())
+      );
     }
 
     if (selectedDecade !== "all") {
-      filtered = filtered.filter((player) => player.decade === selectedDecade || player.decade === "Both")
+      filtered = filtered.filter(
+        (player) => player.decade === selectedDecade || player.decade === "Both"
+      );
     }
 
     if (selectedPosition !== "all") {
-      filtered = filtered.filter((player) => player.position === selectedPosition)
+      filtered = filtered.filter(
+        (player) => player.position === selectedPosition
+      );
     }
 
-    setFilteredPlayers(filtered)
-  }, [searchTerm, selectedDecade, selectedPosition, players])
+    setFilteredPlayers(filtered);
+  }, [searchTerm, selectedDecade, selectedPosition, players]);
 
   const getDecadeBadgeColor = (decade: string) => {
     switch (decade) {
       case "1970s":
-        return "bg-orange-100 text-orange-800 hover:bg-orange-200"
+        return "bg-orange-100 text-orange-800 hover:bg-orange-200";
       case "1980s":
-        return "bg-blue-100 text-blue-800 hover:bg-blue-200"
+        return "bg-blue-100 text-blue-800 hover:bg-blue-200";
       case "Both":
-        return "bg-purple-100 text-purple-800 hover:bg-purple-200"
+        return "bg-purple-100 text-purple-800 hover:bg-purple-200";
       default:
-        return "bg-gray-100 text-gray-800 hover:bg-gray-200"
+        return "bg-gray-100 text-gray-800 hover:bg-gray-200";
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 p-4">
@@ -205,11 +228,13 @@ export default function BaseballDatabase() {
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
             <Baseball className="h-8 w-8 text-green-600" />
-            <h1 className="text-4xl font-bold text-gray-900">Baseball Legends Database</h1>
+            <h1 className="text-4xl font-bold text-gray-900">
+              Baseball Legends Database
+            </h1>
           </div>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Explore the greatest baseball players from the 1970s and 1980s with their iconic images and career
-            statistics
+            Explore the greatest baseball players from the 1970s and 1980s with
+            their iconic images and career statistics
           </p>
         </div>
 
@@ -235,7 +260,10 @@ export default function BaseballDatabase() {
                 <SelectItem value="1980s">1980s</SelectItem>
               </SelectContent>
             </Select>
-            <Select value={selectedPosition} onValueChange={setSelectedPosition}>
+            <Select
+              value={selectedPosition}
+              onValueChange={setSelectedPosition}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select position" />
               </SelectTrigger>
@@ -265,16 +293,30 @@ export default function BaseballDatabase() {
         {/* Player Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredPlayers.map((player) => (
-            <Card key={player.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
+            <Card
+              key={player.id}
+              className="overflow-hidden hover:shadow-lg transition-shadow duration-300"
+            >
               <div className="aspect-[3/4] relative bg-gray-100">
-                <PlayerImage src={player.image_url} alt={`${player.name} baseball card`} className="rounded-t-lg" />
+                <PlayerImage
+                  src={player.image_url}
+                  alt={`${player.name} baseball card`}
+                  className="rounded-t-lg"
+                  playerName={player.name}
+                />
               </div>
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
-                  <CardTitle className="text-lg font-bold text-gray-900 leading-tight">{player.name}</CardTitle>
-                  <Badge className={getDecadeBadgeColor(player.decade)}>{player.decade}</Badge>
+                  <CardTitle className="text-lg font-bold text-gray-900 leading-tight">
+                    {player.name}
+                  </CardTitle>
+                  <Badge className={getDecadeBadgeColor(player.decade)}>
+                    {player.decade}
+                  </Badge>
                 </div>
-                <CardDescription className="text-sm text-gray-600">{player.description}</CardDescription>
+                <CardDescription className="text-sm text-gray-600">
+                  {player.description}
+                </CardDescription>
               </CardHeader>
               <CardContent className="pt-0">
                 <div className="space-y-3">
@@ -293,15 +335,21 @@ export default function BaseballDatabase() {
 
                   {/* Key Stats */}
                   <div className="pt-2 border-t">
-                    <h4 className="text-sm font-semibold text-gray-700 mb-2">Key Stats</h4>
+                    <h4 className="text-sm font-semibold text-gray-700 mb-2">
+                      Key Stats
+                    </h4>
                     <div className="grid grid-cols-2 gap-2 text-xs">
                       {Object.entries(player.stats)
                         .slice(0, 4)
                         .map(([key, value]) => (
                           <div key={key} className="flex justify-between">
-                            <span className="text-gray-500 capitalize">{key.replace(/_/g, " ")}:</span>
+                            <span className="text-gray-500 capitalize">
+                              {key.replace(/_/g, " ")}:
+                            </span>
                             <span className="font-medium">
-                              {typeof value === "number" && value < 1 && value > 0
+                              {typeof value === "number" &&
+                              value < 1 &&
+                              value > 0
                                 ? value.toFixed(3)
                                 : value.toLocaleString()}
                             </span>
@@ -319,11 +367,13 @@ export default function BaseballDatabase() {
         {filteredPlayers.length === 0 && (
           <div className="text-center py-12">
             <Baseball className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-600 mb-2">No players found</h3>
+            <h3 className="text-xl font-semibold text-gray-600 mb-2">
+              No players found
+            </h3>
             <p className="text-gray-500">Try adjusting your search criteria</p>
           </div>
         )}
       </div>
     </div>
-  )
+  );
 }
