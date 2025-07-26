@@ -1,124 +1,154 @@
-# Baseball Reference Integration Guide
+# Legal Image Sources for Baseball Players
 
-## Legal Considerations
+## Important Note: Baseball Reference Limitations
 
-**⚠️ IMPORTANT**: Before implementing Baseball Reference integration, you must:
+**⚠️ CRITICAL**: Baseball Reference does **NOT** provide a public API, and scraping their website violates their terms of service. This document focuses on legal, accessible alternatives.
 
-1. **Review Terms of Service**: Baseball Reference has specific terms regarding data usage
-2. **Contact for Permission**: Reach out to Baseball Reference for commercial use
-3. **Respect Rate Limits**: Implement proper delays between requests
-4. **Attribution**: Credit Baseball Reference appropriately
-5. **Copyright**: Ensure you have rights to use their images
+## Legal Image Sources
 
-## Implementation Approaches
+### 1. Wikimedia Commons (Recommended)
 
-### Option 1: Official API (Recommended)
-
-Baseball Reference offers an official API for subscribers:
-- Contact them at: https://www.baseball-reference.com/contact/
-- Request API access for your use case
-- Follow their documentation and rate limits
-
-### Option 2: Web Scraping (Use with Caution)
-
-If you must scrape their website:
+- **Status**: ✅ Legal and accessible
+- **License**: Public domain and Creative Commons
+- **API**: Available and well-documented
+- **Implementation**: Already integrated in this project
 
 ```javascript
-// Example implementation (NOT RECOMMENDED without permission)
-async function searchBaseballReference(playerName) {
-  const searchUrl = `https://www.baseball-reference.com/search/search.fcgi?search=${encodeURIComponent(playerName)}`;
-  
-  // Add proper headers and respect robots.txt
-  const response = await fetch(searchUrl, {
-    headers: {
-      'User-Agent': 'Your App Name - Contact: your@email.com',
-      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-    }
-  });
-  
-  // Parse HTML and extract image URLs
-  // Implement proper error handling and rate limiting
-}
-```
-
-### Option 3: Alternative Sources
-
-Consider these legal alternatives:
-
-1. **Wikimedia Commons**: Public domain images
-2. **Creative Commons**: Licensed images
-3. **Public Domain**: Historical photos
-4. **Your Own Collection**: Self-hosted images
-
-## Recommended Implementation
-
-```javascript
-// src/utils/baseball-reference.ts
-export class BaseballReferenceAPI {
-  private apiKey: string;
-  private baseUrl: string;
-  private rateLimitDelay: number = 1000; // 1 second between requests
-
-  constructor(apiKey: string) {
-    this.apiKey = apiKey;
-    this.baseUrl = 'https://api.baseball-reference.com'; // Example
-  }
-
-  async searchPlayer(playerName: string) {
-    // Implement with proper authentication and rate limiting
-    await this.delay(this.rateLimitDelay);
-    
-    // Make authenticated API request
-    // Return player data and image URLs
-  }
-
-  private delay(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-}
-```
-
-## Best Practices
-
-1. **Rate Limiting**: Always implement delays between requests
-2. **Error Handling**: Gracefully handle failed requests
-3. **Caching**: Cache results to reduce API calls
-4. **Fallbacks**: Always have fallback image sources
-5. **Monitoring**: Track API usage and errors
-6. **Documentation**: Keep records of your integration
-
-## Alternative Image Sources
-
-### Wikimedia Commons
-```javascript
-import { getPlayerImageFromWikimedia } from '@/utils/wikimedia-images';
+import { getPlayerImageFromWikimedia } from "@/utils/wikimedia-images";
 
 const imageUrl = await getPlayerImageFromWikimedia("Reggie Jackson");
 ```
 
-### Local Images
+### 2. Creative Commons Search
+
+- **Status**: ✅ Legal with proper attribution
+- **License**: Various Creative Commons licenses
+- **Sources**: Flickr, Google Images, etc.
+- **Requirement**: Check and respect individual licenses
+
+### 3. Public Domain Sources
+
+- **Status**: ✅ Legal and free to use
+- **Sources**:
+  - Library of Congress
+  - National Archives
+  - Historical baseball photos
+- **Note**: Many vintage baseball photos are public domain
+
+### 4. Your Own Image Collection
+
+- **Status**: ✅ Legal (if you own the rights)
+- **Approach**: Purchase or create your own images
+- **Storage**: Host locally in `public/images/players/`
+
+## Implementation in This Project
+
+### Current Setup
+
+The project includes:
+
+1. **Wikimedia Commons Integration** (`src/utils/wikimedia-images.ts`)
+
+   - Automatic search for player images
+   - Public domain and CC-licensed images
+   - API-based fetching
+
+2. **Fallback System** (`src/utils/player-images.ts`)
+
+   - Multiple source support
+   - Graceful degradation
+   - Placeholder images
+
+3. **Download Script** (`scripts/download-player-images.js`)
+   - Batch downloading from Wikimedia
+   - Rate limiting and error handling
+   - Legal compliance
+
+### Usage Example
+
 ```javascript
-// Store images locally in public/images/players/
-const localImageUrl = `/images/players/${playerName.toLowerCase().replace(/\s+/g, '-')}.png`;
+// The PlayerImage component automatically tries:
+// 1. Local images first
+// 2. Wikimedia Commons if local fails
+// 3. Placeholder if all else fails
+
+<PlayerImage
+  src={player.image_url}
+  alt={`${player.name} baseball card`}
+  playerName={player.name} // Enables fallback search
+/>
 ```
 
-### Placeholder System
-```javascript
-// Generate baseball-themed placeholders
-const placeholderUrl = `/api/placeholder?name=${encodeURIComponent(playerName)}`;
+## Alternative Approaches
+
+### 1. Manual Image Collection
+
+```bash
+# Download images manually and place in:
+public/images/players/
+├── reggie-jackson.png
+├── pete-rose.png
+├── nolan-ryan.png
+└── ...
 ```
 
-## Next Steps
+### 2. AI-Generated Images
 
-1. **Contact Baseball Reference** for official API access
-2. **Implement Wikimedia Commons** as a fallback
-3. **Create local image collection** for common players
-4. **Set up proper error handling** and fallback system
-5. **Monitor usage** and respect rate limits
+- Use AI services to generate baseball player images
+- Ensure you have rights to use the generated images
+- Consider ethical implications
+
+### 3. Stock Photo Services
+
+- Purchase images from stock photo services
+- Ensure proper licensing for your use case
+- Examples: Shutterstock, Getty Images, iStock
+
+## Best Practices
+
+1. **Always verify licensing** before using any image
+2. **Provide proper attribution** for Creative Commons images
+3. **Respect rate limits** when using APIs
+4. **Cache images** to reduce API calls
+5. **Have fallbacks** for when images fail to load
+6. **Document your sources** for compliance
 
 ## Resources
 
-- [Baseball Reference Contact](https://www.baseball-reference.com/contact/)
+### Legal Image Sources
+
+- [Wikimedia Commons](https://commons.wikimedia.org/) - Public domain and CC images
+- [Creative Commons Search](https://search.creativecommons.org/) - CC-licensed content
+- [Library of Congress](https://www.loc.gov/pictures/) - Historical photos
+- [National Archives](https://www.archives.gov/) - Public domain materials
+
+### APIs and Tools
+
 - [Wikimedia Commons API](https://commons.wikimedia.org/w/api.php)
-- [Creative Commons Search](https://search.creativecommons.org/)
-- [Public Domain Baseball Images](https://www.loc.gov/pictures/search/?q=baseball&st=gallery) 
+- [Creative Commons API](https://api.creativecommons.org/)
+- [Flickr API](https://www.flickr.com/services/api/) (with CC filtering)
+
+### Legal Information
+
+- [Creative Commons Licenses](https://creativecommons.org/licenses/)
+- [Public Domain Resources](https://creativecommons.org/share-your-work/public-domain/)
+- [Fair Use Guidelines](https://www.copyright.gov/fair-use/)
+
+## Next Steps
+
+1. **Test Wikimedia Commons integration** (already implemented)
+2. **Create local image collection** for common players
+3. **Set up proper caching** for performance
+4. **Implement Creative Commons search** if needed
+5. **Add attribution system** for CC images
+
+## Why Not Baseball Reference?
+
+Baseball Reference:
+
+- ❌ No public API available
+- ❌ Terms of service prohibit scraping
+- ❌ Images are copyrighted
+- ❌ No official partnership program for small projects
+
+**Focus on legal, accessible alternatives instead!**

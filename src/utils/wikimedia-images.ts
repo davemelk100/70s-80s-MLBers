@@ -1,54 +1,58 @@
 // Utility for fetching baseball player images from Wikimedia Commons
 
-// These interfaces are used internally but not exported
-type WikimediaSearchResult = {
-  title: string;
-  pageid: number;
-  snippet: string;
-  url: string;
-};
-
-type WikimediaImageInfo = {
-  title: string;
-  imageinfo: Array<{
-    url: string;
-    descriptionurl: string;
-    size: number;
-    width: number;
-    height: number;
-  }>;
-};
-
 export const searchWikimediaImages = async (
   playerName: string
 ): Promise<string | null> => {
   try {
-    // Search for the player on Wikimedia Commons
-    const searchUrl = `https://commons.wikimedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(
-      playerName + " baseball"
-    )}&format=json&origin=*`;
+    // Search for the player on Wikimedia Commons with multiple search terms
+    const searchTerms = [
+      `${playerName} baseball`,
+      `${playerName} MLB`,
+      `${playerName} player`,
+      playerName,
+    ];
 
-    const response = await fetch(searchUrl);
-    const data = await response.json();
+    for (const searchTerm of searchTerms) {
+      const searchUrl = `https://commons.wikimedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(
+        searchTerm
+      )}&format=json&origin=*&srlimit=10`;
 
-    if (data.query?.search?.length > 0) {
-      // Get the first result
-      const firstResult = data.query.search[0];
+      const response = await fetch(searchUrl);
+      const data = await response.json();
 
-      // Get image info for the first result
-      const imageInfoUrl = `https://commons.wikimedia.org/w/api.php?action=query&titles=${encodeURIComponent(
-        firstResult.title
-      )}&prop=imageinfo&iiprop=url|size|dimensions&format=json&origin=*`;
+      if (data.query?.search?.length > 0) {
+        // Look for the best result (prefer baseball-related images)
+        const results = data.query.search;
+        let bestResult = results[0];
 
-      const imageResponse = await fetch(imageInfoUrl);
-      const imageData = await imageResponse.json();
+        // Try to find a result that mentions baseball or has image in the title
+        for (const result of results) {
+          if (
+            result.snippet.toLowerCase().includes("baseball") ||
+            result.title.toLowerCase().includes("baseball") ||
+            result.title.toLowerCase().includes(".jpg") ||
+            result.title.toLowerCase().includes(".png")
+          ) {
+            bestResult = result;
+            break;
+          }
+        }
 
-      const pages = imageData.query?.pages;
-      const pageId = Object.keys(pages)[0];
-      const pageInfo = pages[pageId];
+        // Get image info for the best result
+        const imageInfoUrl = `https://commons.wikimedia.org/w/api.php?action=query&titles=${encodeURIComponent(
+          bestResult.title
+        )}&prop=imageinfo&iiprop=url|size|dimensions&format=json&origin=*`;
 
-      if (pageInfo.imageinfo?.[0]?.url) {
-        return pageInfo.imageinfo[0].url;
+        const imageResponse = await fetch(imageInfoUrl);
+        const imageData = await imageResponse.json();
+
+        const pages = imageData.query?.pages;
+        const pageId = Object.keys(pages)[0];
+        const pageInfo = pages[pageId];
+
+        if (pageInfo.imageinfo?.[0]?.url) {
+          return pageInfo.imageinfo[0].url;
+        }
       }
     }
   } catch (error) {

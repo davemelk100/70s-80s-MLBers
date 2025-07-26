@@ -1,69 +1,56 @@
-// Utility functions for handling player images from various sources
+// Utility functions for handling player images from Wikimedia Commons (Open License)
 
-interface ImageSource {
-  name: string;
-  url: string;
-  fallback?: string;
-}
+import { getPlayerImageFromWikimedia } from "./wikimedia-images";
 
-export const getPlayerImageUrl = (playerName: string): string => {
-  // Try multiple sources in order of preference
-  const sources: ImageSource[] = [
-    {
-      name: "Local Images",
-      url: `/images/players/${playerName
-        .toLowerCase()
-        .replace(/\s+/g, "-")}.png`,
-    },
-    {
-      name: "Wikimedia Commons",
-      url: `https://commons.wikimedia.org/wiki/Special:Filepath/${encodeURIComponent(
-        playerName
-      )}`,
-    },
-    {
-      name: "Fallback",
-      url: "/placeholder.svg",
-    },
-  ];
+export const getPlayerImageUrl = async (
+  playerName: string
+): Promise<string> => {
+  try {
+    // First try to get image from Wikimedia Commons
+    const wikimediaImage = await getPlayerImageFromWikimedia(playerName);
+    if (wikimediaImage && wikimediaImage !== "/placeholder.svg") {
+      return wikimediaImage;
+    }
+  } catch (error) {
+    console.log(`Wikimedia search failed for ${playerName}:`, error);
+  }
 
-  // For now, return the local path - you can expand this later
-  return sources[0].url;
+  // Fallback to local images if Wikimedia doesn't have it
+  const localImageUrl = `/images/players/${playerName
+    .toLowerCase()
+    .replace(/\s+/g, "-")}.png`;
+
+  try {
+    // Test if the local image exists
+    const response = await fetch(localImageUrl, { method: "HEAD" });
+    if (response.ok) {
+      return localImageUrl;
+    }
+  } catch (error) {
+    console.log(`Local image not found for ${playerName}:`, error);
+  }
+
+  // Final fallback
+  return "/placeholder.svg";
 };
 
 export const getPlayerImageWithFallback = async (
   playerName: string
 ): Promise<string> => {
-  const imageUrl = getPlayerImageUrl(playerName);
-
-  try {
-    // Test if the image exists
-    const response = await fetch(imageUrl, { method: "HEAD" });
-    if (response.ok) {
-      return imageUrl;
-    }
-  } catch (error) {
-    console.log(`Image not found for ${playerName}:`, error);
-  }
-
-  // Return fallback image
-  return "/placeholder.svg";
+  return await getPlayerImageUrl(playerName);
 };
 
-// Note: Baseball Reference integration would require:
-// 1. Proper API access or permission
-// 2. Handling of their terms of service
-// 3. Rate limiting and error handling
-// 4. Caching to avoid repeated requests
+// Cache for Wikimedia images to avoid repeated API calls
+const imageCache = new Map<string, string>();
 
-export const getBaseballReferenceImage = (): string => {
-  // This is a placeholder - actual implementation would require:
-  // - API key or proper authentication
-  // - Respect for rate limits
-  // - Compliance with terms of service
+export const getCachedPlayerImage = async (
+  playerName: string
+): Promise<string> => {
+  if (imageCache.has(playerName)) {
+    return imageCache.get(playerName)!;
+  }
 
-  console.warn(
-    "Baseball Reference integration not implemented - requires proper API access"
-  );
-  return "/placeholder.svg";
+  const imageUrl = await getPlayerImageUrl(playerName);
+  imageCache.set(playerName, imageUrl);
+  return imageUrl;
 };

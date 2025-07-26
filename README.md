@@ -21,12 +21,14 @@ A React application showcasing baseball players from the 1970s and 1980s with th
 ### Installation
 
 1. Clone the repository:
+
 ```bash
 git clone <repository-url>
 cd 70s-80s-MLBers
 ```
 
 2. Install dependencies:
+
 ```bash
 npm install
 ```
@@ -34,6 +36,7 @@ npm install
 ### Development
 
 Start the development server:
+
 ```bash
 npm run dev
 ```
@@ -43,11 +46,13 @@ The application will be available at `http://localhost:3000`
 ### Building for Production
 
 Build the application:
+
 ```bash
 npm run build
 ```
 
 Preview the production build:
+
 ```bash
 npm run preview
 ```
@@ -83,7 +88,21 @@ src/
 - Filter by decade (1970s, 1980s, or both)
 - Filter by position
 - View player statistics and career information
+- **Wikimedia Commons Integration** - Player images sourced from Wikimedia Commons under open license
 - Responsive design for mobile and desktop
+
+## Image Sources
+
+This application uses **Wikimedia Commons** as the primary source for player images. All images are:
+
+- **Open License**: Available under Creative Commons licenses
+- **Legally Compliant**: Properly attributed and freely usable
+- **High Quality**: Sourced from Wikimedia's extensive baseball image collection
+- **Fallback System**: Includes local images and placeholders when Wikimedia images aren't available
+
+### Wikimedia Commons Attribution
+
+Images from Wikimedia Commons are automatically attributed with a small "Wikimedia Commons" label on each image. The application also includes a footer link to Wikimedia Commons for proper attribution.
 
 ## Migration from Next.js
 

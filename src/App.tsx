@@ -21,8 +21,13 @@ import {
   Calendar,
   MapPin,
   Trophy,
+  RefreshCw,
 } from "lucide-react";
 import { PlayerImage } from "@/components/player-image";
+import {
+  prefetchPlayerImages,
+  clearImageCache,
+} from "@/utils/image-prefetcher";
 
 interface Player {
   id: number;
@@ -36,7 +41,7 @@ interface Player {
   stats: Record<string, any>;
 }
 
-// Mock data for demonstration - updated with local image paths
+// Mock data for demonstration - using Wikimedia Commons images
 const mockPlayers: Player[] = [
   {
     id: 1,
@@ -45,7 +50,8 @@ const mockPlayers: Player[] = [
     position: "Right Field",
     years_active: "1967-1987",
     decade: "Both",
-    image_url: "/images/players/reggie-jackson.png",
+    image_url:
+      "https://upload.wikimedia.org/wikipedia/commons/5/52/Reggie_Jackson_-_New_York_Yankees_-_1981.jpg",
     description:
       'Known as "Mr. October" for his clutch postseason performances',
     stats: { home_runs: 563, rbi: 1702, batting_average: 0.262 },
@@ -57,7 +63,8 @@ const mockPlayers: Player[] = [
     position: "First Base",
     years_active: "1963-1986",
     decade: "Both",
-    image_url: "/images/players/pete-rose.png",
+    image_url:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Rose_walking_onto_field.jpg/960px-Rose_walking_onto_field.jpg",
     description: "All-time hits leader and key member of the Big Red Machine",
     stats: { hits: 4256, games: 3562, batting_average: 0.303 },
   },
@@ -68,7 +75,8 @@ const mockPlayers: Player[] = [
     position: "Pitcher",
     years_active: "1966-1993",
     decade: "Both",
-    image_url: "/images/players/nolan-ryan.png",
+    image_url:
+      "https://upload.wikimedia.org/wikipedia/commons/f/f3/Nolan_Ryan_in_Atlanta_close-up.jpg",
     description:
       "Hall of Fame pitcher known for his blazing fastball and no-hitters",
     stats: { strikeouts: 5714, no_hitters: 7, era: 3.19 },
@@ -80,7 +88,8 @@ const mockPlayers: Player[] = [
     position: "Third Base",
     years_active: "1973-1993",
     decade: "Both",
-    image_url: "/images/players/george-brett.png",
+    image_url:
+      "https://upload.wikimedia.org/wikipedia/commons/3/33/George_Brett_1990_CROP.jpg",
     description: "Royals legend who nearly hit .400 in 1980",
     stats: { batting_average: 0.305, home_runs: 317, hits: 3154 },
   },
@@ -91,7 +100,8 @@ const mockPlayers: Player[] = [
     position: "Right Field",
     years_active: "1982-2001",
     decade: "1980s",
-    image_url: "/images/players/tony-gwynn.png",
+    image_url:
+      "https://upload.wikimedia.org/wikipedia/commons/4/43/Tony_Gwynn_83.jpg",
     description: "Master contact hitter with 8 batting titles",
     stats: { batting_average: 0.338, hits: 3141, stolen_bases: 319 },
   },
@@ -102,76 +112,35 @@ const mockPlayers: Player[] = [
     position: "Third Base",
     years_active: "1972-1989",
     decade: "Both",
-    image_url: "/images/players/mike-schmidt.png",
+    image_url:
+      "https://upload.wikimedia.org/wikipedia/commons/c/ca/Mike_Schmidt_Press_Box.jpg",
     description: "Hall of Fame third baseman and three-time MVP",
     stats: { home_runs: 548, rbi: 1595, gold_gloves: 10 },
   },
   {
     id: 7,
-    name: "Carlton Fisk",
-    team: "Boston Red Sox",
-    position: "Catcher",
-    years_active: "1969-1993",
+    name: "Willie Mays Aikens",
+    team: "Kansas City Royals",
+    position: "First Base",
+    years_active: "1977-1985",
     decade: "Both",
-    image_url: "/images/players/carlton-fisk.png",
-    description: "Famous for his dramatic 1975 World Series home run",
-    stats: { home_runs: 376, rbi: 1330, all_star_games: 11 },
+    image_url:
+      "https://upload.wikimedia.org/wikipedia/commons/0/02/Willie_Mays_Aikens.jpg",
+    description:
+      "Power-hitting first baseman for the Royals during their championship era",
+    stats: { home_runs: 110, rbi: 415, batting_average: 0.271 },
   },
   {
     id: 8,
-    name: "Rickey Henderson",
-    team: "Oakland Athletics",
-    position: "Left Field",
-    years_active: "1979-2003",
-    decade: "1980s",
-    image_url: "/images/players/rickey-henderson.png",
-    description:
-      "All-time stolen base leader and leadoff hitter extraordinaire",
-    stats: { stolen_bases: 1406, runs: 2295, batting_average: 0.279 },
-  },
-  {
-    id: 9,
-    name: "Wade Boggs",
-    team: "Boston Red Sox",
-    position: "Third Base",
-    years_active: "1982-1999",
-    decade: "1980s",
-    image_url: "/images/players/wade-boggs.png",
-    description: "Five-time batting champion known for his hitting consistency",
-    stats: { batting_average: 0.328, hits: 3010, walks: 1412 },
-  },
-  {
-    id: 10,
-    name: "Don Mattingly",
-    team: "New York Yankees",
-    position: "First Base",
-    years_active: "1982-1995",
-    decade: "1980s",
-    image_url: "/images/players/don-mattingly.png",
-    description: "Yankees captain and 1985 AL MVP",
-    stats: { batting_average: 0.307, home_runs: 222, rbi: 1099 },
-  },
-  {
-    id: 11,
-    name: "Johnny Bench",
-    team: "Cincinnati Reds",
-    position: "Catcher",
-    years_active: "1967-1983",
+    name: "Tom Veryzer",
+    team: "Detroit Tigers",
+    position: "Shortstop",
+    years_active: "1973-1984",
     decade: "Both",
-    image_url: "/images/players/johnny-bench.png",
-    description: "Hall of Fame catcher and cornerstone of the Big Red Machine",
-    stats: { home_runs: 389, rbi: 1376, gold_gloves: 10 },
-  },
-  {
-    id: 12,
-    name: "Rod Carew",
-    team: "Minnesota Twins",
-    position: "Second Base",
-    years_active: "1967-1985",
-    decade: "Both",
-    image_url: "/images/players/rod-carew.png",
-    description: "Seven-time batting champion with incredible contact skills",
-    stats: { batting_average: 0.328, hits: 3053, stolen_bases: 353 },
+    image_url:
+      "https://upload.wikimedia.org/wikipedia/commons/5/5d/Tom_Veryzer_1975.jpg",
+    description: "Solid defensive shortstop for the Tigers and other teams",
+    stats: { batting_average: 0.241, hits: 1001, games: 1208 },
   },
 ];
 
@@ -181,6 +150,21 @@ export default function App() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDecade, setSelectedDecade] = useState("all");
   const [selectedPosition, setSelectedPosition] = useState("all");
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  // Start prefetching images when component mounts
+  useEffect(() => {
+    const playerNames = players.map((player) => player.name);
+    prefetchPlayerImages(playerNames);
+  }, [players]);
+
+  const handleRefreshImages = async () => {
+    setIsRefreshing(true);
+    clearImageCache(); // Clear cache to force fresh downloads
+    const playerNames = players.map((player) => player.name);
+    await prefetchPlayerImages(playerNames);
+    setIsRefreshing(false);
+  };
 
   useEffect(() => {
     let filtered = players;
@@ -194,9 +178,21 @@ export default function App() {
     }
 
     if (selectedDecade !== "all") {
-      filtered = filtered.filter(
-        (player) => player.decade === selectedDecade || player.decade === "Both"
-      );
+      if (selectedDecade === "70s and 80s") {
+        // Show players from both 1970s and 1980s decades
+        filtered = filtered.filter(
+          (player) =>
+            player.decade === "1970s" ||
+            player.decade === "1980s" ||
+            player.decade === "Both"
+        );
+      } else {
+        // Show players from specific decade or "Both"
+        filtered = filtered.filter(
+          (player) =>
+            player.decade === selectedDecade || player.decade === "Both"
+        );
+      }
     }
 
     if (selectedPosition !== "all") {
@@ -216,6 +212,8 @@ export default function App() {
         return "bg-blue-100 text-blue-800 hover:bg-blue-200";
       case "Both":
         return "bg-purple-100 text-purple-800 hover:bg-purple-200";
+      case "70s and 80s":
+        return "bg-green-100 text-green-800 hover:bg-green-200";
       default:
         return "bg-gray-100 text-gray-800 hover:bg-gray-200";
     }
@@ -240,7 +238,7 @@ export default function App() {
 
         {/* Filters */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="relative">
               <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
               <Input
@@ -258,6 +256,7 @@ export default function App() {
                 <SelectItem value="all">All Decades</SelectItem>
                 <SelectItem value="1970s">1970s</SelectItem>
                 <SelectItem value="1980s">1980s</SelectItem>
+                <SelectItem value="70s and 80s">70s and 80s</SelectItem>
               </SelectContent>
             </Select>
             <Select
@@ -280,6 +279,16 @@ export default function App() {
                 <SelectItem value="Right Field">Right Field</SelectItem>
               </SelectContent>
             </Select>
+            <button
+              onClick={handleRefreshImages}
+              disabled={isRefreshing}
+              className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              <RefreshCw
+                className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`}
+              />
+              {isRefreshing ? "Refreshing..." : "Refresh Images"}
+            </button>
           </div>
         </div>
 
@@ -373,6 +382,28 @@ export default function App() {
             <p className="text-gray-500">Try adjusting your search criteria</p>
           </div>
         )}
+
+        {/* Footer with image source info */}
+        <div className="mt-12 pt-8 border-t border-gray-200">
+          <div className="text-center text-sm text-gray-500">
+            <p className="mb-2">
+              Player images sourced from{" "}
+              <a
+                href="https://commons.wikimedia.org"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:text-blue-800 underline"
+              >
+                Wikimedia Commons
+              </a>{" "}
+              under open license
+            </p>
+            <p>
+              All images are freely available for use under Creative Commons
+              licenses
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
