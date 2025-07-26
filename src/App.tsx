@@ -1716,7 +1716,7 @@ export default function App() {
   const [players] = useState<Player[]>(mockPlayers);
   const [filteredPlayers, setFilteredPlayers] = useState<Player[]>(mockPlayers);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedDecade, setSelectedDecade] = useState("all");
+  const [selectedSet, setSelectedSet] = useState("all");
   const [selectedPosition, setSelectedPosition] = useState("all");
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -1746,21 +1746,15 @@ export default function App() {
       );
     }
 
-    if (selectedDecade !== "all") {
-      if (selectedDecade === "70s and 80s") {
-        // Show players from both 1970s and 1980s decades
-        filtered = filtered.filter(
-          (player) =>
-            player.decade === "1970s" ||
-            player.decade === "1980s" ||
-            player.decade === "Both"
-        );
-      } else {
-        // Show players from specific decade or "Both"
-        filtered = filtered.filter(
-          (player) =>
-            player.decade === selectedDecade || player.decade === "Both"
-        );
+    if (selectedSet !== "all") {
+      // For now, all players are from 1978 set until we implement the database
+      // This will be updated when we switch to the database architecture
+      if (selectedSet === "1978") {
+        // Show all players (currently all are from 1978 set)
+        filtered = filtered.filter((player) => true);
+      } else if (selectedSet === "1979") {
+        // Show no players for now (no 1979 set data yet)
+        filtered = filtered.filter((player) => false);
       }
     }
 
@@ -1771,7 +1765,7 @@ export default function App() {
     }
 
     setFilteredPlayers(filtered);
-  }, [searchTerm, selectedDecade, selectedPosition, players]);
+  }, [searchTerm, selectedSet, selectedPosition, players]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 p-4">
@@ -1802,15 +1796,14 @@ export default function App() {
                 className="pl-10"
               />
             </div>
-            <Select value={selectedDecade} onValueChange={setSelectedDecade}>
+            <Select value={selectedSet} onValueChange={setSelectedSet}>
               <SelectTrigger>
-                <SelectValue placeholder="Select decade" />
+                <SelectValue placeholder="Select set" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Decades</SelectItem>
-                <SelectItem value="1970s">1970s</SelectItem>
-                <SelectItem value="1980s">1980s</SelectItem>
-                <SelectItem value="70s and 80s">70s and 80s</SelectItem>
+                <SelectItem value="all">All Sets</SelectItem>
+                <SelectItem value="1978">1978 Set</SelectItem>
+                <SelectItem value="1979">1979 Set</SelectItem>
               </SelectContent>
             </Select>
             <Select
