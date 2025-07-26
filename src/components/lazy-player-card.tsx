@@ -6,20 +6,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+
 import { MapPin, Trophy, Calendar } from "lucide-react";
 import { PlayerImage } from "./player-image";
 import { Player } from "@/App";
 
 interface LazyPlayerCardProps {
   player: Player;
-  getDecadeBadgeColor: (decade: string) => string;
 }
 
-export function LazyPlayerCard({
-  player,
-  getDecadeBadgeColor,
-}: LazyPlayerCardProps) {
+export function LazyPlayerCard({ player }: LazyPlayerCardProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -88,14 +84,9 @@ export function LazyPlayerCard({
           />
         </div>
         <CardHeader className="pb-3">
-          <div className="flex items-start justify-between">
-            <CardTitle className="text-lg font-bold text-gray-900 leading-tight">
-              {player.name}
-            </CardTitle>
-            <Badge className={getDecadeBadgeColor(player.decade)}>
-              {player.decade}
-            </Badge>
-          </div>
+          <CardTitle className="text-lg font-bold text-gray-900 leading-tight">
+            {player.name}
+          </CardTitle>
           <CardDescription className="text-sm text-gray-600">
             {player.description}
           </CardDescription>

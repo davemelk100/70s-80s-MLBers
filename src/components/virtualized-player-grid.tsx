@@ -4,10 +4,9 @@ import { Player } from "@/App";
 
 interface VirtualizedPlayerGridProps {
   players: Player[];
-  getDecadeBadgeColor: (decade: string) => string;
 }
 
-export function VirtualizedPlayerGrid({ players, getDecadeBadgeColor }: VirtualizedPlayerGridProps) {
+export function VirtualizedPlayerGrid({ players }: VirtualizedPlayerGridProps) {
   const [visibleRange, setVisibleRange] = useState({ start: 0, end: 12 });
   const [containerHeight, setContainerHeight] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -20,13 +19,13 @@ export function VirtualizedPlayerGrid({ players, getDecadeBadgeColor }: Virtuali
 
     const scrollTop = containerRef.current.scrollTop;
     const containerHeight = containerRef.current.clientHeight;
-    
+
     const startRow = Math.floor(scrollTop / itemHeight);
     const endRow = Math.ceil((scrollTop + containerHeight) / itemHeight);
-    
+
     const start = Math.max(0, startRow * itemsPerRow);
     const end = Math.min(players.length, (endRow + rowsPerView) * itemsPerRow);
-    
+
     setVisibleRange({ start, end });
   }, [players.length]);
 
@@ -45,7 +44,7 @@ export function VirtualizedPlayerGrid({ players, getDecadeBadgeColor }: Virtuali
 
     container.addEventListener("scroll", handleScroll);
     window.addEventListener("resize", handleResize);
-    
+
     setContainerHeight(container.clientHeight);
     updateVisibleRange();
 
@@ -75,15 +74,11 @@ export function VirtualizedPlayerGrid({ players, getDecadeBadgeColor }: Virtuali
         >
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {visiblePlayers.map((player, index) => (
-              <LazyPlayerCard
-                key={player.id}
-                player={player}
-                getDecadeBadgeColor={getDecadeBadgeColor}
-              />
+              <LazyPlayerCard key={player.id} player={player} />
             ))}
           </div>
         </div>
       </div>
     </div>
   );
-} 
+}

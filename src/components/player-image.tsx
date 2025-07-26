@@ -36,7 +36,7 @@ export function PlayerImage({
         try {
           // Try to get image from Wikimedia Commons in the background
           const wikimediaImage = await getCachedPlayerImage(playerName);
-          if (wikimediaImage && wikimediaImage !== "/placeholder.svg") {
+          if (wikimediaImage && wikimediaImage !== "/placeholder.svg" && wikimediaImage !== "") {
             setCurrentSrc(wikimediaImage);
             // Check if this is a Wikimedia image (not local or placeholder)
             setIsWikimediaImage(
@@ -44,6 +44,9 @@ export function PlayerImage({
                 !wikimediaImage.includes("/images/players/") &&
                 wikimediaImage !== "/placeholder.svg"
             );
+          } else {
+            // If no image found, try the original src
+            console.log(`No image found for ${playerName}, using original src: ${src}`);
           }
         } catch (error) {
           console.log("Failed to load Wikimedia image:", error);

@@ -33,16 +33,20 @@ export const getPlayerImageUrl = async (
 
   // Try local images with JPG preference
   const imageUrls = getPlayerImageUrls(playerName);
+  console.log(`Checking images for ${playerName}:`, imageUrls);
 
   for (const imageUrl of imageUrls) {
     try {
       // Test if the local image exists
       const response = await fetch(imageUrl, { method: "HEAD" });
       if (response.ok) {
+        console.log(`Found image for ${playerName}: ${imageUrl}`);
         return imageUrl;
+      } else {
+        console.log(`Image not found (${response.status}): ${imageUrl}`);
       }
     } catch (error) {
-      console.log(`Local image not found: ${imageUrl}`, error);
+      console.log(`Error checking image: ${imageUrl}`, error);
     }
   }
 
