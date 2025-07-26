@@ -6,6 +6,8 @@ interface PlayerImageProps {
   alt: string;
   className?: string;
   playerName?: string; // Optional player name for Wikimedia search
+  onLoad?: () => void; // Optional callback when image loads
+  onError?: () => void; // Optional callback when image fails to load
 }
 
 export function PlayerImage({
@@ -13,6 +15,8 @@ export function PlayerImage({
   alt,
   className = "",
   playerName,
+  onLoad,
+  onError,
 }: PlayerImageProps) {
   const [imageError, setImageError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -62,24 +66,24 @@ export function PlayerImage({
 
     setImageError(true);
     setIsLoading(false);
+    onError?.(); // Call the optional onError callback
   };
 
   const handleLoad = () => {
     setIsLoading(false);
+    onLoad?.(); // Call the optional onLoad callback
   };
 
-  if (imageError) {
+  if (imageError || !currentSrc) {
     return (
       <div
-        className={`bg-gradient-to-br from-blue-100 to-green-100 flex items-center justify-center ${className}`}
+        className={`bg-gray-200 flex items-center justify-center ${className}`}
       >
-        <div className="text-center p-4">
-          <div className="text-4xl mb-2">⚾</div>
-          <div className="text-sm text-gray-600 font-medium">
-            Baseball Legend
-          </div>
-          <div className="text-xs text-gray-500 mt-1">
-            {alt.split(" ")[0]} {alt.split(" ")[1]}
+        <div className="text-center p-4 w-full">
+          <div className="animate-pulse">
+            <div className="h-4 bg-gray-300 rounded mb-2"></div>
+            <div className="h-3 bg-gray-300 rounded mb-1"></div>
+            <div className="h-3 bg-gray-300 rounded w-3/4 mx-auto"></div>
           </div>
         </div>
       </div>
@@ -94,7 +98,7 @@ export function PlayerImage({
         />
       )}
       <img
-        src={currentSrc || "/placeholder.svg"}
+        src={currentSrc}
         alt={alt}
         className={`w-full h-full ${className} ${
           isLoading ? "opacity-0" : "opacity-100"

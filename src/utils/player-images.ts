@@ -2,6 +2,22 @@
 
 import { getPlayerImageFromWikimedia } from "./wikimedia-images";
 
+// Function to generate local image URL with JPG preference
+export const getLocalPlayerImageUrl = (playerName: string): string => {
+  const formattedName = playerName.toLowerCase().replace(/\s+/g, "-");
+  // Try JPG first, then PNG as fallback
+  return `/images/players/${formattedName}.jpg`;
+};
+
+// Function to get all possible image URLs for a player
+export const getPlayerImageUrls = (playerName: string): string[] => {
+  const formattedName = playerName.toLowerCase().replace(/\s+/g, "-");
+  return [
+    `/images/players/${formattedName}.jpg`,
+    `/images/players/${formattedName}.png`,
+  ];
+};
+
 export const getPlayerImageUrl = async (
   playerName: string
 ): Promise<string> => {
@@ -15,23 +31,23 @@ export const getPlayerImageUrl = async (
     console.log(`Wikimedia search failed for ${playerName}:`, error);
   }
 
-  // Fallback to local images if Wikimedia doesn't have it
-  const localImageUrl = `/images/players/${playerName
-    .toLowerCase()
-    .replace(/\s+/g, "-")}.png`;
+  // Try local images with JPG preference
+  const imageUrls = getPlayerImageUrls(playerName);
 
-  try {
-    // Test if the local image exists
-    const response = await fetch(localImageUrl, { method: "HEAD" });
-    if (response.ok) {
-      return localImageUrl;
+  for (const imageUrl of imageUrls) {
+    try {
+      // Test if the local image exists
+      const response = await fetch(imageUrl, { method: "HEAD" });
+      if (response.ok) {
+        return imageUrl;
+      }
+    } catch (error) {
+      console.log(`Local image not found: ${imageUrl}`, error);
     }
-  } catch (error) {
-    console.log(`Local image not found for ${playerName}:`, error);
   }
 
-  // Final fallback
-  return "/placeholder.svg";
+  // Return empty string to trigger skeleton loading
+  return "";
 };
 
 export const getPlayerImageWithFallback = async (
