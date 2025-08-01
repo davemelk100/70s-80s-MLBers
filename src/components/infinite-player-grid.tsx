@@ -9,7 +9,6 @@ interface InfinitePlayerGridProps {
 export function InfinitePlayerGrid({ players }: InfinitePlayerGridProps) {
   const [visibleCount, setVisibleCount] = useState(20); // Start with 20 cards
   const [isLoading, setIsLoading] = useState(false);
-  const observerRef = useRef<HTMLDivElement>(null);
   const loadingRef = useRef<HTMLDivElement>(null);
 
   const loadMore = useCallback(() => {

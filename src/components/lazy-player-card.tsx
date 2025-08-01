@@ -69,7 +69,7 @@ export function LazyPlayerCard({ player }: LazyPlayerCardProps) {
   return (
     <div ref={cardRef}>
       <Card
-        className={`overflow-hidden hover:shadow-lg transition-all duration-300 ${
+        className={`overflow-hidden hover:shadow-lg transition-all duration-300 rounded-none ${
           isLoaded ? "opacity-100" : "opacity-0"
         }`}
       >
@@ -77,7 +77,7 @@ export function LazyPlayerCard({ player }: LazyPlayerCardProps) {
           <PlayerImage
             src={player.image_url}
             alt={`${player.name} baseball card`}
-            className="rounded-t-lg"
+            className=""
             playerName={player.name}
             onLoad={handleLoad}
             onError={handleImageError}
@@ -85,6 +85,9 @@ export function LazyPlayerCard({ player }: LazyPlayerCardProps) {
         </div>
         <CardHeader className="pb-3">
           <CardTitle className="text-lg font-bold text-gray-900 leading-tight">
+            {player.id > 0 && (
+              <span className="text-sm text-gray-500 mr-2">#{player.id}</span>
+            )}
             {player.name}
           </CardTitle>
           <CardDescription className="text-sm text-gray-600">
@@ -125,7 +128,7 @@ export function LazyPlayerCard({ player }: LazyPlayerCardProps) {
                           : typeof value === "number" &&
                             (key === "era" || key === "batting_average")
                           ? value.toFixed(3)
-                          : value}
+                          : String(value)}
                       </span>
                     </div>
                   ))}

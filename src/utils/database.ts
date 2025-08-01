@@ -1,15 +1,15 @@
 // Database utilities for 1978-1979 Topps Baseball Card Collection
 
-import type { 
-  CardDetails, 
-  FilterOptions, 
-  CardsResponse, 
+import type {
+  CardDetails,
+  FilterOptions,
+  CardsResponse,
   PlayerResponse,
   PlayerStats,
   CreatePlayerData,
   CreateCardData,
-  UpdateCardData
-} from '@/types/database';
+  UpdateCardData,
+} from "@/types/database";
 
 // Mock database for now - replace with actual database connection
 class MockDatabase {
@@ -24,8 +24,8 @@ class MockDatabase {
   private initializeMockData() {
     // Initialize with the current 33 players from App.tsx
     this.sets = [
-      { id: 1, year: 1978, name: '1978 Topps Baseball', total_cards: 726 },
-      { id: 2, year: 1979, name: '1979 Topps Baseball', total_cards: 726 }
+      { id: 1, year: 1978, name: "1978 Topps Baseball", total_cards: 726 },
+      { id: 2, year: 1979, name: "1979 Topps Baseball", total_cards: 726 },
     ];
 
     // Mock cards data - this would come from the actual database
@@ -33,18 +33,19 @@ class MockDatabase {
       {
         card_id: 1,
         card_number: 1,
-        team: 'St. Louis Cardinals',
-        image_url: '/images/players/lou-brock.jpg',
-        stats_json: '{"stolen_bases": 938, "hits": 3023, "batting_average": 0.293}',
-        notes: '77 Record Breaker Card',
+        team: "St. Louis Cardinals",
+        image_url: "/images/players/lou-brock.jpg",
+        stats_json:
+          '{"stolen_bases": 938, "hits": 3023, "batting_average": 0.293}',
+        notes: "77 Record Breaker Card",
         player_id: 1,
-        name: 'Lou Brock',
-        position: 'Left Field',
-        years_active: '1961-1979',
-        decade: '1970s',
-        player_description: 'Hall of Fame outfielder and stolen base legend',
+        name: "Lou Brock",
+        position: "Left Field",
+        years_active: "1961-1979",
+        decade: "1970s",
+        player_description: "Hall of Fame outfielder and stolen base legend",
         set_year: 1978,
-        set_name: '1978 Topps Baseball'
+        set_name: "1978 Topps Baseball",
       },
       // Add more mock cards here...
     ];
@@ -56,29 +57,39 @@ class MockDatabase {
 
     // Apply filters
     if (options.set_year) {
-      filteredCards = filteredCards.filter(card => card.set_year === options.set_year);
+      filteredCards = filteredCards.filter(
+        (card) => card.set_year === options.set_year
+      );
     }
 
-    if (options.decade && options.decade !== 'all') {
-      if (options.decade === '70s and 80s') {
-        filteredCards = filteredCards.filter(card => 
-          card.decade === '1970s' || card.decade === '1980s' || card.decade === 'Both'
+    if (options.decade && options.decade !== "all") {
+      if (options.decade === "70s and 80s") {
+        filteredCards = filteredCards.filter(
+          (card) =>
+            card.decade === "1970s" ||
+            card.decade === "1980s" ||
+            card.decade === "Both"
         );
       } else {
-        filteredCards = filteredCards.filter(card => card.decade === options.decade);
+        filteredCards = filteredCards.filter(
+          (card) => card.decade === options.decade
+        );
       }
     }
 
-    if (options.position && options.position !== 'all') {
-      filteredCards = filteredCards.filter(card => card.position === options.position);
+    if (options.position && options.position !== "all") {
+      filteredCards = filteredCards.filter(
+        (card) => card.position === options.position
+      );
     }
 
     if (options.search_term) {
       const searchTerm = options.search_term.toLowerCase();
-      filteredCards = filteredCards.filter(card => 
-        card.name.toLowerCase().includes(searchTerm) ||
-        card.team.toLowerCase().includes(searchTerm) ||
-        card.position.toLowerCase().includes(searchTerm)
+      filteredCards = filteredCards.filter(
+        (card) =>
+          card.name.toLowerCase().includes(searchTerm) ||
+          card.team.toLowerCase().includes(searchTerm) ||
+          card.position.toLowerCase().includes(searchTerm)
       );
     }
 
@@ -96,22 +107,24 @@ class MockDatabase {
       total_count: totalCount,
       page,
       page_size: pageSize,
-      total_pages: totalPages
+      total_pages: totalPages,
     };
   }
 
   // Get a single player with all their cards
   async getPlayer(playerId: number): Promise<PlayerResponse | null> {
-    const player = this.players.find(p => p.id === playerId);
+    const player = this.players.find((p) => p.id === playerId);
     if (!player) return null;
 
-    const playerCards = this.cards.filter(card => card.player_id === playerId);
+    const playerCards = this.cards.filter(
+      (card) => card.player_id === playerId
+    );
     const stats = this.parseStatsFromCards(playerCards);
 
     return {
       player,
       cards: playerCards,
-      stats
+      stats,
     };
   }
 
@@ -126,13 +139,13 @@ class MockDatabase {
     const bothSetsPlayers = new Map();
 
     // Find players in both sets
-    this.cards.forEach(card => {
+    this.cards.forEach((card) => {
       if (card.set_year === 1978) {
         playerIds.add(card.player_id);
       }
     });
 
-    this.cards.forEach(card => {
+    this.cards.forEach((card) => {
       if (card.set_year === 1979 && playerIds.has(card.player_id)) {
         bothSetsPlayers.set(card.player_id, {
           id: card.player_id,
@@ -143,13 +156,13 @@ class MockDatabase {
           card_1978: null,
           team_1978: null,
           card_1979: card.card_number,
-          team_1979: card.team
+          team_1979: card.team,
         });
       }
     });
 
     // Add 1978 card info
-    this.cards.forEach(card => {
+    this.cards.forEach((card) => {
       if (card.set_year === 1978 && bothSetsPlayers.has(card.player_id)) {
         const player = bothSetsPlayers.get(card.player_id);
         player.card_1978 = card.card_number;
@@ -163,8 +176,8 @@ class MockDatabase {
   // Parse stats from cards
   private parseStatsFromCards(cards: CardDetails[]): any[] {
     const stats: any[] = [];
-    
-    cards.forEach(card => {
+
+    cards.forEach((card) => {
       if (card.stats_json) {
         try {
           const parsedStats = JSON.parse(card.stats_json);
@@ -172,14 +185,14 @@ class MockDatabase {
             stats.push({
               id: stats.length + 1,
               player_id: card.player_id,
-              stat_type: 'career',
+              stat_type: "career",
               stat_name: statName,
               stat_value: statValue,
-              created_at: new Date().toISOString()
+              created_at: new Date().toISOString(),
             });
           });
         } catch (error) {
-          console.error('Error parsing stats JSON:', error);
+          console.error("Error parsing stats JSON:", error);
         }
       }
     });
@@ -193,7 +206,7 @@ class MockDatabase {
       id: this.players.length + 1,
       ...playerData,
       created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
     this.players.push(newPlayer);
     return newPlayer;
@@ -205,29 +218,30 @@ class MockDatabase {
       id: this.cards.length + 1,
       ...cardData,
       created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
-    this.cards.push(newCard as CardDetails);
+    // Note: This is a mock implementation - in real app, this would be properly typed
+    this.cards.push(newCard as unknown as CardDetails);
     return newCard;
   }
 
   // Update a card
   async updateCard(cardId: number, updateData: UpdateCardData) {
-    const cardIndex = this.cards.findIndex(card => card.card_id === cardId);
+    const cardIndex = this.cards.findIndex((card) => card.card_id === cardId);
     if (cardIndex === -1) return null;
 
     this.cards[cardIndex] = {
       ...this.cards[cardIndex],
       ...updateData,
-      updated_at: new Date().toISOString()
-    };
+      // Note: updated_at is not in CardDetails type but needed for mock implementation
+    } as CardDetails;
 
     return this.cards[cardIndex];
   }
 
   // Delete a card
   async deleteCard(cardId: number) {
-    const cardIndex = this.cards.findIndex(card => card.card_id === cardId);
+    const cardIndex = this.cards.findIndex((card) => card.card_id === cardId);
     if (cardIndex === -1) return false;
 
     this.cards.splice(cardIndex, 1);
@@ -243,36 +257,37 @@ export const parseStats = (statsJson: string): PlayerStats => {
   try {
     return JSON.parse(statsJson);
   } catch (error) {
-    console.error('Error parsing stats JSON:', error);
+    console.error("Error parsing stats JSON:", error);
     return {};
   }
 };
 
 export const formatStats = (stats: PlayerStats): string => {
   const formattedStats: string[] = [];
-  
+
   if (stats.hits) formattedStats.push(`${stats.hits} hits`);
   if (stats.home_runs) formattedStats.push(`${stats.home_runs} HR`);
-  if (stats.batting_average) formattedStats.push(`.${Math.round(stats.batting_average * 1000)} avg`);
+  if (stats.batting_average)
+    formattedStats.push(`.${Math.round(stats.batting_average * 1000)} avg`);
   if (stats.stolen_bases) formattedStats.push(`${stats.stolen_bases} SB`);
   if (stats.rbi) formattedStats.push(`${stats.rbi} RBI`);
   if (stats.wins) formattedStats.push(`${stats.wins} wins`);
   if (stats.era) formattedStats.push(`${stats.era} ERA`);
   if (stats.strikeouts) formattedStats.push(`${stats.strikeouts} K`);
   if (stats.saves) formattedStats.push(`${stats.saves} saves`);
-  
-  return formattedStats.join(', ');
+
+  return formattedStats.join(", ");
 };
 
 export const getDecadeBadgeColor = (decade: string): string => {
   switch (decade) {
-    case '1970s':
-      return 'bg-orange-100 text-orange-800';
-    case '1980s':
-      return 'bg-blue-100 text-blue-800';
-    case 'Both':
-      return 'bg-purple-100 text-purple-800';
+    case "1970s":
+      return "bg-orange-100 text-orange-800";
+    case "1980s":
+      return "bg-blue-100 text-blue-800";
+    case "Both":
+      return "bg-purple-100 text-purple-800";
     default:
-      return 'bg-gray-100 text-gray-800';
+      return "bg-gray-100 text-gray-800";
   }
-}; 
+};

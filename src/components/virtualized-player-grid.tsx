@@ -8,7 +8,6 @@ interface VirtualizedPlayerGridProps {
 
 export function VirtualizedPlayerGrid({ players }: VirtualizedPlayerGridProps) {
   const [visibleRange, setVisibleRange] = useState({ start: 0, end: 12 });
-  const [containerHeight, setContainerHeight] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const itemHeight = 500; // Approximate height of each card
   const itemsPerRow = 4; // Number of cards per row
@@ -38,14 +37,12 @@ export function VirtualizedPlayerGrid({ players }: VirtualizedPlayerGridProps) {
     };
 
     const handleResize = () => {
-      setContainerHeight(container.clientHeight);
       updateVisibleRange();
     };
 
     container.addEventListener("scroll", handleScroll);
     window.addEventListener("resize", handleResize);
 
-    setContainerHeight(container.clientHeight);
     updateVisibleRange();
 
     return () => {
@@ -73,7 +70,7 @@ export function VirtualizedPlayerGrid({ players }: VirtualizedPlayerGridProps) {
           }}
         >
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {visiblePlayers.map((player, index) => (
+            {visiblePlayers.map((player) => (
               <LazyPlayerCard key={player.id} player={player} />
             ))}
           </div>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { getCachedPlayerImage } from "@/utils/player-images";
+import { Image as ImageIcon } from "lucide-react";
 
 interface PlayerImageProps {
   src: string;
@@ -32,11 +33,15 @@ export function PlayerImage({
       setCurrentSrc(src);
       setIsWikimediaImage(false);
 
-      if (playerName) {
+      if (playerName && playerName !== "Checklist") {
         try {
           // Try to get image from Wikimedia Commons in the background
           const wikimediaImage = await getCachedPlayerImage(playerName);
-          if (wikimediaImage && wikimediaImage !== "/placeholder.svg" && wikimediaImage !== "") {
+          if (
+            wikimediaImage &&
+            wikimediaImage !== "/placeholder.svg" &&
+            wikimediaImage !== ""
+          ) {
             setCurrentSrc(wikimediaImage);
             // Check if this is a Wikimedia image (not local or placeholder)
             setIsWikimediaImage(
@@ -46,7 +51,9 @@ export function PlayerImage({
             );
           } else {
             // If no image found, try the original src
-            console.log(`No image found for ${playerName}, using original src: ${src}`);
+            console.log(
+              `No image found for ${playerName}, using original src: ${src}`
+            );
           }
         } catch (error) {
           console.log("Failed to load Wikimedia image:", error);
@@ -80,13 +87,13 @@ export function PlayerImage({
   if (imageError || !currentSrc) {
     return (
       <div
-        className={`bg-gray-200 flex items-center justify-center ${className}`}
+        className={`bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center ${className}`}
       >
         <div className="text-center p-4 w-full">
-          <div className="animate-pulse">
-            <div className="h-4 bg-gray-300 rounded mb-2"></div>
-            <div className="h-3 bg-gray-300 rounded mb-1"></div>
-            <div className="h-3 bg-gray-300 rounded w-3/4 mx-auto"></div>
+          <ImageIcon className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+          <div className="text-xs text-gray-500">
+            <p className="font-medium">Image Not Available</p>
+            <p className="text-gray-400">Player card placeholder</p>
           </div>
         </div>
       </div>

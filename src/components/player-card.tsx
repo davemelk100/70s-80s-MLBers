@@ -6,8 +6,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import { Calendar, MapPin, Trophy } from "lucide-react";
+import { Calendar, MapPin, Trophy, Image as ImageIcon } from "lucide-react";
 import Image from "next/image";
+import { useState } from "react";
 
 interface Player {
   id: number;
@@ -26,15 +27,56 @@ interface PlayerCardProps {
 }
 
 export function PlayerCard({ player }: PlayerCardProps) {
+  const [imageError, setImageError] = useState(false);
+  const [imageLoading, setImageLoading] = useState(true);
+
+  const handleImageError = () => {
+    setImageError(true);
+    setImageLoading(false);
+  };
+
+  const handleImageLoad = () => {
+    setImageLoading(false);
+  };
+
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
+    <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 rounded-none">
       <div className="aspect-[3/4] relative bg-gray-100">
-        <Image
-          src={player.image_url || "/placeholder.svg"}
-          alt={`${player.name} baseball card`}
-          fill
-          className="object-cover"
-        />
+        {imageError ? (
+          // Placeholder for missing image
+          <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-gray-200 to-gray-300 p-4">
+            <ImageIcon className="h-12 w-12 text-gray-400 mb-2" />
+            <div className="text-center">
+              <p className="text-sm font-medium text-gray-600 mb-1">
+                {player.name}
+              </p>
+              <p className="text-xs text-gray-500">
+                {player.team} • {player.position}
+              </p>
+            </div>
+          </div>
+        ) : (
+          <Image
+            src={player.image_url || "/placeholder.svg"}
+            alt={`${player.name} baseball card`}
+            fill
+            className={`object-cover transition-opacity duration-300 ${
+              imageLoading ? "opacity-0" : "opacity-100"
+            }`}
+            onError={handleImageError}
+            onLoad={handleImageLoad}
+          />
+        )}
+
+        {/* Loading overlay */}
+        {imageLoading && !imageError && (
+          <div className="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-300 animate-pulse flex items-center justify-center">
+            <div className="text-center">
+              <div className="h-4 bg-gray-300 rounded mb-2 w-16 mx-auto"></div>
+              <div className="h-3 bg-gray-300 rounded w-12 mx-auto"></div>
+            </div>
+          </div>
+        )}
       </div>
       <CardHeader className="pb-3">
         <CardTitle className="text-lg font-bold text-gray-900 leading-tight">
