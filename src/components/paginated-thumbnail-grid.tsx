@@ -6,11 +6,15 @@ import { Player } from "@/App";
 interface PaginatedThumbnailGridProps {
   players: Player[];
   itemsPerPage?: number;
+  savedRecords?: Set<number>;
+  onToggleSave?: (playerId: number) => void;
 }
 
 export function PaginatedThumbnailGrid({
   players,
   itemsPerPage = 24,
+  savedRecords,
+  onToggleSave,
 }: PaginatedThumbnailGridProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(itemsPerPage);
@@ -47,7 +51,12 @@ export function PaginatedThumbnailGrid({
       {/* Thumbnail Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-3">
         {currentPlayers.map((player) => (
-          <PlayerThumbnail key={player.id} player={player} />
+          <PlayerThumbnail
+            key={player.id}
+            player={player}
+            isSaved={savedRecords?.has(player.id)}
+            onToggleSave={onToggleSave}
+          />
         ))}
       </div>
 

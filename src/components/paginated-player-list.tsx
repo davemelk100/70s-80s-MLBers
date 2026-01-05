@@ -6,11 +6,15 @@ import { Player } from "@/App";
 interface PaginatedPlayerListProps {
   players: Player[];
   itemsPerPage?: number;
+  savedRecords?: Set<number>;
+  onToggleSave?: (playerId: number) => void;
 }
 
 export function PaginatedPlayerList({
   players,
   itemsPerPage = 10,
+  savedRecords,
+  onToggleSave,
 }: PaginatedPlayerListProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(itemsPerPage);
@@ -47,7 +51,12 @@ export function PaginatedPlayerList({
       {/* Player List */}
       <div className="space-y-3">
         {currentPlayers.map((player) => (
-          <PlayerListItem key={player.id} player={player} />
+          <PlayerListItem
+            key={player.id}
+            player={player}
+            isSaved={savedRecords?.has(player.id)}
+            onToggleSave={onToggleSave}
+          />
         ))}
       </div>
 

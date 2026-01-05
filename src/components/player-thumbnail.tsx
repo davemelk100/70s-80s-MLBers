@@ -2,12 +2,15 @@ import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { PlayerImage } from "./player-image";
 import { Player } from "@/App";
+import { Heart } from "lucide-react";
 
 interface PlayerThumbnailProps {
   player: Player;
+  isSaved?: boolean;
+  onToggleSave?: (playerId: number) => void;
 }
 
-export function PlayerThumbnail({ player }: PlayerThumbnailProps) {
+export function PlayerThumbnail({ player, isSaved = false, onToggleSave }: PlayerThumbnailProps) {
   const [isLoaded, setIsLoaded] = useState(false);
 
   const handleLoad = () => {
@@ -19,11 +22,10 @@ export function PlayerThumbnail({ player }: PlayerThumbnailProps) {
   };
 
   return (
-    <div>
+    <div className="relative">
       <Card
-        className={`overflow-hidden hover:shadow-md transition-all duration-300 rounded-none ${
-          isLoaded ? "opacity-100" : "opacity-0"
-        }`}
+        className={`overflow-hidden hover:shadow-md transition-all duration-300 rounded-none ${isLoaded ? "opacity-100" : "opacity-0"
+          }`}
       >
         <CardContent className="p-2">
           <div className="flex flex-col items-center text-center">
@@ -57,6 +59,23 @@ export function PlayerThumbnail({ player }: PlayerThumbnailProps) {
           </div>
         </CardContent>
       </Card>
+
+      {/* Save button - positioned outside card for better visibility */}
+      {onToggleSave && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleSave(player.id);
+          }}
+          className="absolute top-1 right-1 p-1 rounded-full bg-white/90 hover:bg-white shadow-sm transition-all duration-200 hover:scale-110 z-10"
+          aria-label={isSaved ? "Unsave player" : "Save player"}
+        >
+          <Heart
+            className={`h-3 w-3 transition-colors ${isSaved ? "fill-red-500 text-red-500" : "text-gray-600"
+              }`}
+          />
+        </button>
+      )}
     </div>
   );
 }

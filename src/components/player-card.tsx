@@ -6,7 +6,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import { Calendar, MapPin, Trophy, Image as ImageIcon } from "lucide-react";
+import { Calendar, MapPin, Trophy, Image as ImageIcon, Heart } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -24,9 +24,11 @@ interface Player {
 
 interface PlayerCardProps {
   player: Player;
+  isSaved?: boolean;
+  onToggleSave?: (playerId: number) => void;
 }
 
-export function PlayerCard({ player }: PlayerCardProps) {
+export function PlayerCard({ player, isSaved = false, onToggleSave }: PlayerCardProps) {
   const [imageError, setImageError] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
 
@@ -60,9 +62,8 @@ export function PlayerCard({ player }: PlayerCardProps) {
             src={player.image_url || "/placeholder.svg"}
             alt={`${player.name} baseball card`}
             fill
-            className={`object-cover transition-opacity duration-300 ${
-              imageLoading ? "opacity-0" : "opacity-100"
-            }`}
+            className={`object-cover transition-opacity duration-300 ${imageLoading ? "opacity-0" : "opacity-100"
+              }`}
             onError={handleImageError}
             onLoad={handleImageLoad}
           />
@@ -76,6 +77,23 @@ export function PlayerCard({ player }: PlayerCardProps) {
               <div className="h-3 bg-gray-300 rounded w-12 mx-auto"></div>
             </div>
           </div>
+        )}
+
+        {/* Save button */}
+        {onToggleSave && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleSave(player.id);
+            }}
+            className="absolute top-2 right-2 p-2 rounded-full bg-white/90 hover:bg-white shadow-md transition-all duration-200 hover:scale-110 z-10"
+            aria-label={isSaved ? "Unsave player" : "Save player"}
+          >
+            <Heart
+              className={`h-5 w-5 transition-colors ${isSaved ? "fill-red-500 text-red-500" : "text-gray-600"
+                }`}
+            />
+          </button>
         )}
       </div>
       <CardHeader className="pb-3">

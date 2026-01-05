@@ -7,10 +7,12 @@ import {
   Grid3X3,
   List,
   Grid,
+  Bookmark,
 } from "lucide-react";
 import { PaginatedPlayerGrid } from "@/components/paginated-player-grid";
 import { PaginatedPlayerList } from "@/components/paginated-player-list";
 import { PaginatedThumbnailGrid } from "@/components/paginated-thumbnail-grid";
+import { getSavedRecords, saveRecord, unsaveRecord } from "@/utils/saved-records";
 
 export interface Player {
   id: number;
@@ -10273,6 +10275,28 @@ export default function App() {
   const [viewMode, setViewMode] = useState<"grid" | "list" | "thumbnails">(
     "thumbnails"
   );
+  const [savedRecords, setSavedRecords] = useState<Set<number>>(new Set());
+  const [showSavedOnly, setShowSavedOnly] = useState(false);
+
+  // Load saved records from localStorage on mount
+  useEffect(() => {
+    setSavedRecords(getSavedRecords());
+  }, []);
+
+  // Toggle save/unsave for a player
+  const toggleSaveRecord = (playerId: number) => {
+    if (savedRecords.has(playerId)) {
+      unsaveRecord(playerId);
+      setSavedRecords(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(playerId);
+        return newSet;
+      });
+    } else {
+      saveRecord(playerId);
+      setSavedRecords(prev => new Set(prev).add(playerId));
+    }
+  };
 
   // Start prefetching images when component mounts
   useEffect(() => {
@@ -10310,8 +10334,13 @@ export default function App() {
       );
     }
 
+    // Filter by saved records if showSavedOnly is true
+    if (showSavedOnly) {
+      filtered = filtered.filter((player) => savedRecords.has(player.id));
+    }
+
     setFilteredPlayers(filtered);
-  }, [searchTerm, selectedSet, selectedPosition, players]);
+  }, [searchTerm, selectedSet, selectedPosition, players, showSavedOnly, savedRecords]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
@@ -10338,36 +10367,53 @@ export default function App() {
             <div className="flex gap-2">
               <button
                 onClick={() => setViewMode("grid")}
-                className={`flex items-center justify-center gap-2 px-3 py-2 rounded-md transition-colors ${
-                  viewMode === "grid"
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                }`}
+                className={`flex items-center justify-center gap-2 px-3 py-2 rounded-md transition-colors ${viewMode === "grid"
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  }`}
               >
                 <Grid3X3 className="h-4 w-4" />
                 <span className="hidden sm:inline">Grid</span>
               </button>
               <button
                 onClick={() => setViewMode("thumbnails")}
-                className={`flex items-center justify-center gap-2 px-3 py-2 rounded-md transition-colors ${
-                  viewMode === "thumbnails"
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                }`}
+                className={`flex items-center justify-center gap-2 px-3 py-2 rounded-md transition-colors ${viewMode === "thumbnails"
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  }`}
               >
                 <Grid className="h-4 w-4" />
                 <span className="hidden sm:inline">Thumbnails</span>
               </button>
               <button
                 onClick={() => setViewMode("list")}
-                className={`flex items-center justify-center gap-2 px-3 py-2 rounded-md transition-colors ${
-                  viewMode === "list"
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                }`}
+                className={`flex items-center justify-center gap-2 px-3 py-2 rounded-md transition-colors ${viewMode === "list"
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  }`}
               >
                 <List className="h-4 w-4" />
                 <span className="hidden sm:inline">List</span>
+              </button>
+
+              {/* Saved Records Filter Toggle */}
+              <button
+                onClick={() => setShowSavedOnly(!showSavedOnly)}
+                className={`flex items-center justify-center gap-2 px-3 py-2 rounded-md transition-colors ml-2 ${showSavedOnly
+                  ? "bg-red-500 text-white"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  }`}
+                title={showSavedOnly ? "Show all players" : "Show saved only"}
+              >
+                <Bookmark className={`h-4 w-4 ${showSavedOnly ? "fill-current" : ""}`} />
+                <span className="hidden sm:inline">
+                  {showSavedOnly ? "Saved" : "All"}
+                </span>
+                {savedRecords.size > 0 && (
+                  <span className="text-xs font-semibold">
+                    ({savedRecords.size})
+                  </span>
+                )}
               </button>
             </div>
           </div>
@@ -10386,14 +10432,26 @@ export default function App() {
         {/* Player Cards with Pagination */}
         {filteredPlayers.length > 0 ? (
           viewMode === "grid" ? (
-            <PaginatedPlayerGrid players={filteredPlayers} itemsPerPage={12} />
+            <PaginatedPlayerGrid
+              players={filteredPlayers}
+              itemsPerPage={12}
+              savedRecords={savedRecords}
+              onToggleSave={toggleSaveRecord}
+            />
           ) : viewMode === "thumbnails" ? (
             <PaginatedThumbnailGrid
               players={filteredPlayers}
               itemsPerPage={10}
+              savedRecords={savedRecords}
+              onToggleSave={toggleSaveRecord}
             />
           ) : (
-            <PaginatedPlayerList players={filteredPlayers} itemsPerPage={10} />
+            <PaginatedPlayerList
+              players={filteredPlayers}
+              itemsPerPage={10}
+              savedRecords={savedRecords}
+              onToggleSave={toggleSaveRecord}
+            />
           )
         ) : (
           <div className="text-center py-12">

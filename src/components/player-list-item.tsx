@@ -1,14 +1,16 @@
 import { useState, useRef, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { MapPin, Trophy, Calendar } from "lucide-react";
+import { MapPin, Trophy, Calendar, Heart } from "lucide-react";
 import { PlayerImage } from "./player-image";
 import { Player } from "@/App";
 
 interface PlayerListItemProps {
   player: Player;
+  isSaved?: boolean;
+  onToggleSave?: (playerId: number) => void;
 }
 
-export function PlayerListItem({ player }: PlayerListItemProps) {
+export function PlayerListItem({ player, isSaved = false, onToggleSave }: PlayerListItemProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -51,12 +53,11 @@ export function PlayerListItem({ player }: PlayerListItemProps) {
   return (
     <div ref={cardRef}>
       <Card
-        className={`hover:shadow-md transition-all duration-300 ${
-          isLoaded ? "opacity-100" : "opacity-0"
-        }`}
+        className={`hover:shadow-md transition-all duration-300 ${isLoaded ? "opacity-100" : "opacity-0"
+          }`}
       >
         <CardContent className="p-3">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 relative">
             {/* Player Image */}
             <div className="w-12 h-12 relative bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
               <PlayerImage
@@ -114,19 +115,36 @@ export function PlayerListItem({ player }: PlayerListItemProps) {
                       </span>{" "}
                       <span className="font-medium">
                         {typeof value === "number" &&
-                        value < 10 &&
-                        key !== "era" &&
-                        key !== "batting_average"
+                          value < 10 &&
+                          key !== "era" &&
+                          key !== "batting_average"
                           ? value.toFixed(1)
                           : typeof value === "number" &&
                             (key === "era" || key === "batting_average")
-                          ? value.toFixed(3)
-                          : String(value)}
+                            ? value.toFixed(3)
+                            : String(value)}
                       </span>
                     </div>
                   ))}
               </div>
             </div>
+
+            {/* Save button */}
+            {onToggleSave && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onToggleSave(player.id);
+                }}
+                className="ml-3 p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-all duration-200 hover:scale-110 flex-shrink-0"
+                aria-label={isSaved ? "Unsave player" : "Save player"}
+              >
+                <Heart
+                  className={`h-5 w-5 transition-colors ${isSaved ? "fill-red-500 text-red-500" : "text-gray-600"
+                    }`}
+                />
+              </button>
+            )}
           </div>
         </CardContent>
       </Card>

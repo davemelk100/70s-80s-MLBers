@@ -6,11 +6,15 @@ import { Player } from "@/App";
 interface PaginatedPlayerGridProps {
   players: Player[];
   itemsPerPage?: number;
+  savedRecords?: Set<number>;
+  onToggleSave?: (playerId: number) => void;
 }
 
 export function PaginatedPlayerGrid({
   players,
   itemsPerPage = 10,
+  savedRecords,
+  onToggleSave,
 }: PaginatedPlayerGridProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(itemsPerPage);
@@ -47,7 +51,12 @@ export function PaginatedPlayerGrid({
       {/* Player Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {currentPlayers.map((player) => (
-          <LazyPlayerCard key={player.id} player={player} />
+          <LazyPlayerCard
+            key={player.id}
+            player={player}
+            isSaved={savedRecords?.has(player.id)}
+            onToggleSave={onToggleSave}
+          />
         ))}
       </div>
 
